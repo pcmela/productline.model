@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-
 import javax.validation.constraints.*;
 
 @Entity
@@ -88,6 +87,11 @@ public class Module implements BaseProductLineEntity{
 	
 	public void addVariability(Variability variability){
 		getVariabilitiesObject().add(variability);
+	}
+	@Override
+	public String toString() {
+	
+		return this.name;
 	}
 	
 	

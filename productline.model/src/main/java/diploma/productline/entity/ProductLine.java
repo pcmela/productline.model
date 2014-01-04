@@ -10,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
 import javax.validation.constraints.*;
 
 /**
@@ -73,5 +72,11 @@ public class ProductLine implements BaseProductLineEntity{
 	public void addModule(Module module){
 		getModulesObject().add(module);
 	}
+	@Override
+	public String toString() {
+		return this.name;
+	}
+	
+	
 	
 }

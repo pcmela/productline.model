@@ -5,7 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-
 import javax.validation.constraints.*;
 
 @Entity
@@ -45,6 +44,11 @@ public class Variability implements BaseProductLineEntity{
 	public void setId(String id) {
 		this.id = id;
 	}
+	@Override
+	public String toString() {
+		return this.name;
+	}
+	
 	
 	
 }
