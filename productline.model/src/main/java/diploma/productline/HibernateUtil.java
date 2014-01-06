@@ -54,8 +54,8 @@ public class HibernateUtil {
     	return sessionFactory;
     }
     
-    public static void updateSessionFactory(Properties properties, boolean resetConfiguration){
+    /*public static void updateSessionFactory(Properties properties, boolean resetConfiguration){
     	sessionFactory = rebuildSessionFactory(properties, resetConfiguration);
-    }
+    }*/
 
 }
