@@ -34,12 +34,17 @@ public class App
     				System.out.println(e.getClassName() + " - " + e.getPath() + ": " + e.getMessage());
     			}
     		}else{
-	    		
+	    		HibernateUtil.initSessionFactory(null);
 	    		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 	    		session.beginTransaction();
 	    		session.save(prod);
 	    		session.getTransaction().commit();
 	    		System.out.println("Test connection!");
+	    		session = HibernateUtil.getSessionFactory().getCurrentSession();
+	    		session.beginTransaction();
+	    		HibernateUtil.getSessionFactory().getCurrentSession().get(ProductLine.class, "1");
+	    		session.getTransaction().commit();
+	    		System.out.println("loaded!");
     		}
     	}catch(YAMLException e){
     		// TODO logger

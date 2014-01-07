@@ -1,15 +1,21 @@
 package diploma.productline.entity;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.*;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Entity
 public class Module implements BaseProductLineEntity{
@@ -31,11 +37,13 @@ public class Module implements BaseProductLineEntity{
 	@JoinColumn(name="product_line_id")
 	private ProductLine productLine;
 	
-	@OneToMany(mappedBy="module")
-	private List<Variability> variabilities;
+	@OneToMany(mappedBy="module",fetch=FetchType.EAGER)
+	@Cascade(CascadeType.ALL)
+	private Set<Variability> variabilities;
 	
-	@OneToMany(mappedBy="module")
-	private List<Element> elements;
+	@OneToMany(mappedBy="module",fetch=FetchType.EAGER)
+	@Cascade(CascadeType.ALL)
+	private Set<Element> elements;
 	
 	
 	
@@ -66,21 +74,21 @@ public class Module implements BaseProductLineEntity{
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public List<Variability> getVariabilities() {
+	public Set<Variability> getVariabilities() {
 		return variabilities;
 	}
-	public void setVariabilities(List<Variability> variabilities) {
+	public void setVariabilities(Set<Variability> variabilities) {
 		this.variabilities = variabilities;
 	}
-	public List<Element> getElements() {
+	public Set<Element> getElements() {
 		return elements;
 	}
-	public void setElements(List<Element> elements) {
+	public void setElements(Set<Element> elements) {
 		this.elements = elements;
 	}
 	
-	private List<Variability> getVariabilitiesObject(){
-		if(this.variabilities == null) return variabilities = new ArrayList<Variability>();
+	private Set<Variability> getVariabilitiesObject(){
+		if(this.variabilities == null) return variabilities = new HashSet<Variability>();
 		else return variabilities;
 		
 	}
