@@ -14,6 +14,7 @@
   
   <mapping class="diploma.productline.entity.ProductLine"/>
   <mapping class="diploma.productline.entity.Module"/>
+  <mapping class="diploma.productline.entity.PackageModule"/>
   <mapping class="diploma.productline.entity.Element"/>
   <mapping class="diploma.productline.entity.Variability"/>
   <mapping class="diploma.productline.entity.Type"/>

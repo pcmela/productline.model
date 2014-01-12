@@ -6,6 +6,7 @@ import org.hibernate.Session;
 import org.yaml.snakeyaml.error.YAMLException;
 
 import diploma.productline.configuration.YamlExtractor;
+import diploma.productline.entity.PackageModule;
 import diploma.productline.entity.ProductLine;
 import diploma.productline.validate.ProductLineErrors;
 import diploma.productline.validate.ProductLineValidator;
@@ -45,6 +46,13 @@ public class App
 	    		HibernateUtil.getSessionFactory().getCurrentSession().get(ProductLine.class, "1");
 	    		session.getTransaction().commit();
 	    		System.out.println("loaded!");
+	    		
+	    		diploma.productline.entity.PackageModule p = new PackageModule();
+	    		p.setName("sdsd");
+	    		session = HibernateUtil.getSessionFactory().getCurrentSession();
+	    		session.beginTransaction();
+	    		session.save(p);
+	    		session.getTransaction().commit();
     		}
     	}catch(YAMLException e){
     		// TODO logger

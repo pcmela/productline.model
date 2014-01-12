@@ -45,6 +45,10 @@ public class Module implements BaseProductLineEntity{
 	@Cascade(CascadeType.ALL)
 	private Set<Element> elements;
 	
+	@OneToMany(mappedBy="module",fetch=FetchType.EAGER)
+	@Cascade(CascadeType.ALL)
+	private Set<PackageModule> packages;
+	
 	
 	
 	public ProductLine getProductLine() {
@@ -87,6 +91,12 @@ public class Module implements BaseProductLineEntity{
 		this.elements = elements;
 	}
 	
+	public Set<PackageModule> getPackages() {
+		return packages;
+	}
+	public void setPackages(Set<PackageModule> packages) {
+		this.packages = packages;
+	}
 	private Set<Variability> getVariabilitiesObject(){
 		if(this.variabilities == null) return variabilities = new HashSet<Variability>();
 		else return variabilities;
