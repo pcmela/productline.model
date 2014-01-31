@@ -10,7 +10,6 @@ import java.util.Set;
 
 import diploma.productline.DaoUtil;
 import diploma.productline.entity.Module;
-import diploma.productline.entity.ProductLine;
 import diploma.productline.entity.Variability;
 
 public class VariabilityDAO extends BaseDAO{

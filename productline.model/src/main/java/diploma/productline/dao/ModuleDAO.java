@@ -6,12 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Properties;
-
-
-
 import java.util.Set;
-
-import org.apache.cassandra.cli.CliParser.newColumnFamily_return;
 
 import diploma.productline.DaoUtil;
 import diploma.productline.entity.Module;

@@ -11,7 +11,6 @@ import java.util.Set;
 import diploma.productline.DaoUtil;
 import diploma.productline.entity.Element;
 import diploma.productline.entity.Module;
-import diploma.productline.entity.Variability;
 
 public class ElementDAO extends BaseDAO{
 
