@@ -32,6 +32,8 @@ public class Module implements BaseProductLineEntity{
 	@Column(length=150)
 	private String description;
 	
+	@Column(nullable=false)
+	private boolean isVariable;
 	
 	@ManyToOne
 	@JoinColumn(name="product_line_id")
@@ -50,7 +52,12 @@ public class Module implements BaseProductLineEntity{
 	private Set<PackageModule> packages;
 	
 	
-	
+	public boolean isVariable() {
+		return isVariable;
+	}
+	public void setVariable(boolean isVariable) {
+		this.isVariable = isVariable;
+	}
 	public ProductLine getProductLine() {
 		return productLine;
 	}

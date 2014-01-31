@@ -13,6 +13,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.*;
@@ -45,7 +47,9 @@ public class ProductLine implements BaseProductLineEntity{
 	@Cascade(CascadeType.ALL)
 	private Set<Module> modules;
 	
-	
+	@ManyToOne
+	@JoinColumn(name="product_line_id")
+	private ProductLine productLine;
 	
 	/*public Long getId() {
 		return id;
@@ -55,6 +59,12 @@ public class ProductLine implements BaseProductLineEntity{
 	}*/
 	public String getName() {
 		return name;
+	}
+	public ProductLine getProductLine() {
+		return productLine;
+	}
+	public void setProductLine(ProductLine productLine) {
+		this.productLine = productLine;
 	}
 	public void setName(String name) {
 		this.name = name;

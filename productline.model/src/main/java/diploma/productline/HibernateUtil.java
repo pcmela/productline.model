@@ -3,6 +3,7 @@ package diploma.productline;
 import java.util.Properties;
 
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
@@ -69,6 +70,12 @@ public class HibernateUtil {
 	public static void initSessionFactory(Properties properties)
 			throws HibernateException {
 		sessionFactory = buildSessionFactory(properties);
+	}
+	
+	public static void removeSessionFactory(){
+		sessionFactory.getCurrentSession().disconnect();
+		sessionFactory.close();
+		sessionFactory = null;
 	}
 
 }

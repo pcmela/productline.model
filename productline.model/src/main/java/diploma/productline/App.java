@@ -1,11 +1,18 @@
 package diploma.productline;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import org.hibernate.Session;
 import org.yaml.snakeyaml.error.YAMLException;
 
 import diploma.productline.configuration.YamlExtractor;
+import diploma.productline.dao.ProductLineDAO;
 import diploma.productline.entity.PackageModule;
 import diploma.productline.entity.ProductLine;
 import diploma.productline.validate.ProductLineErrors;
@@ -21,7 +28,36 @@ public class App
 	
     public static void main( String[] args )
     {
-    	String path = "C:\\Users\\IBM_ADMIN\\Desktop\\Neon.yaml";
+    	Properties p = new Properties();
+    	p.setProperty("connection_url", "jdbc:h2:~/test2");
+    	p.setProperty("username", "sa");
+    	p.setProperty("password", "");
+    	
+    	try {
+			Class.forName("org.h2.Driver");
+		
+	        Connection conn;
+			try {
+				try {
+					ProductLineDAO.createDatabaseStructure(p);
+					System.out.println("done");
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	/*String path = "C:\\Users\\IBM_ADMIN\\Desktop\\Neon.yaml";
     	App app = new App();
     	app.setHibernateUtil(new HibernateUtil());
     	try{
@@ -57,7 +93,7 @@ public class App
     	}catch(YAMLException e){
     		// TODO logger
     		e.printStackTrace();
-    	}
+    	}*/
     }
 
 	public HibernateUtil getHibernateUtil() {
