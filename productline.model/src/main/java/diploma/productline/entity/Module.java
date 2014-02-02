@@ -104,12 +104,19 @@ public class Module implements BaseProductLineEntity{
 	}
 	private Set<Variability> getVariabilitiesObject(){
 		if(this.variabilities == null) return variabilities = new HashSet<Variability>();
-		else return variabilities;
-		
+		else return variabilities;		
+	}
+	private Set<Element> getElementsObject(){
+		if(this.elements == null) return elements = new HashSet<Element>();
+		else return elements;		
 	}
 	
 	public void addVariability(Variability variability){
 		getVariabilitiesObject().add(variability);
+	}
+	
+	public void addElement(Element element){
+		getElementsObject().add(element);
 	}
 	@Override
 	public String toString() {

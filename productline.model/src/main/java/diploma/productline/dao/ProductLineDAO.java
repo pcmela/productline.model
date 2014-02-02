@@ -15,8 +15,8 @@ import diploma.productline.entity.ProductLine;
 
 public class ProductLineDAO extends BaseDAO {
 
-	Properties properties;
 	private final String selectProductLine = "SELECT name, description FROM productline WHERE name = ?";
+	private final String insertProductLine = "INSERT INTO productline VALUES (?,?,?)";
 	/*private final String selectVariability = "SELECT id, name, module_id FROM variability WHERE module_id = ?";
 	private final String selectElement = "SELECT element_id, name, description, module_id FROM element WHERE module_id = ?";*/
 	// private final String selectType =
@@ -74,6 +74,28 @@ public class ProductLineDAO extends BaseDAO {
 		}
 
 		return productLine;
-
+	}
+	
+	public boolean save(ProductLine productLine, Connection connection) throws ClassNotFoundException, SQLException{
+		Connection con = null;
+		if(connection == null){
+			con = DaoUtil.connect(properties);
+		}else{
+			con = connection;
+		}
+		PreparedStatement prepStatement = con.prepareStatement(insertProductLine);
+		prepStatement.setString(1, productLine.getName());
+		prepStatement.setString(2, productLine.getDescription());
+		prepStatement.setString(3, null);
+		return prepStatement.execute();
+	}
+	
+	public boolean createAll(ProductLine productLine) throws ClassNotFoundException, SQLException{
+		Connection connection = DaoUtil.connect(properties);
+		ModuleDAO moduleDao = new ModuleDAO(properties);
+		
+		this.save(productLine, connection);
+		moduleDao.createAll(productLine.getModules(), connection);
+		return false;
 	}
 }

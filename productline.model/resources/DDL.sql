@@ -1,4 +1,4 @@
-CREATE TABLE productline
+CREATE TABLE IF NOT EXISTS productline
 (
 	name VARCHAR(50) NOT NULL,
 	description VARCHAR(100),
@@ -8,12 +8,12 @@ CREATE TABLE productline
 ;
 
 
-CREATE TABLE module
+CREATE TABLE IF NOT EXISTS module
 (
-	module_id INTEGER NOT NULL,
+	module_id VARCHAR(50) NOT NULL,
 	name VARCHAR(50),
 	description VARCHAR(100),
-	is_variable 
+	is_variable BOOLEAN,
 	product_line_id VARCHAR(50),
 	PRIMARY KEY (module_id),
 	FOREIGN KEY (product_line_id) 
@@ -22,22 +22,22 @@ CREATE TABLE module
 ;
 
 
-CREATE TABLE package
+CREATE TABLE IF NOT EXISTS package
 (
-	package_id INTEGER NOT NULL,
+	package_id INTEGER NOT NULL AUTO_INCREMENT,
 	name VARCHAR(50) NOT NULL,
-	module_id INTEGER NOT NULL,
+	module_id VARCHAR(50) NOT NULL,
 	PRIMARY KEY (package_id)
 ) 
 ;
 
 
-CREATE TABLE variability
+CREATE TABLE IF NOT EXISTS variability
 (
-	variability_id INTEGER NOT NULL,
+	variability_id INTEGER NOT NULL AUTO_INCREMENT,
 	name VARCHAR(50) NOT NULL,
 	description VARCHAR(100),
-	module_id INTEGER NOT NULL,
+	module_id VARCHAR(50) NOT NULL,
 	PRIMARY KEY (variability_id),
 	FOREIGN KEY (module_id) 
     		REFERENCES module(module_id)
@@ -45,13 +45,13 @@ CREATE TABLE variability
 ;
 
 
-CREATE TABLE element
+CREATE TABLE IF NOT EXISTS element
 (
-	element_id INTEGER NOT NULL,
+	element_id INTEGER NOT NULL AUTO_INCREMENT,
 	name VARCHAR(50) NOT NULL,
 	description VARCHAR(100),
-	type_id INTEGER NOT NULL,
-	module_id INTEGER NOT NULL,
+	type_id INTEGER,
+	module_id VARCHAR(50) NOT NULL,
 	PRIMARY KEY (element_id),
 	FOREIGN KEY (module_id) 
     		REFERENCES module(module_id)
@@ -59,7 +59,7 @@ CREATE TABLE element
 ;
 
 
-CREATE TABLE type
+CREATE TABLE IF NOT EXISTS type
 (
 	type_id INTEGER NOT NULL,
 	name VARCHAR(50) NOT NULL,

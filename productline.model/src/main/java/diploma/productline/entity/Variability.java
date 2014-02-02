@@ -19,6 +19,8 @@ public class Variability implements BaseProductLineEntity{
 	@NotNull
 	private String name;
 	
+	private String description;
+	
 	@ManyToOne
 	@JoinColumn(name="module_id")
 	private Module module; 
@@ -47,6 +49,12 @@ public class Variability implements BaseProductLineEntity{
 	@Override
 	public String toString() {
 		return this.name;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 	
