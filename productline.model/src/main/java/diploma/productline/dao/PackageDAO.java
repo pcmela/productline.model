@@ -15,7 +15,8 @@ public class PackageDAO extends BaseDAO {
 
 	private final String selectPackage = "SELECT package_id, name FROM package WHERE id like ?";
 	private final String selectPackageByModule = "SELECT package_id, name FROM package WHERE module_id like ?";
-	private final String insertElement = "INSERT INTO package VALUES (?,?,?)";
+	private final String insertElement = "INSERT INTO package (name, module_id) VALUES (?,?)";
+	private final String removePackage = "DELETE FROM package WHERE package_id = ?";
 
 	public PackageDAO(Properties properties) {
 		super(properties);
@@ -37,7 +38,7 @@ public class PackageDAO extends BaseDAO {
 				while (result.next()) {
 					pkg = new PackageModule();
 					pkg.setName(result.getString("name"));
-					pkg.setId(result.getLong("id"));
+					pkg.setId(result.getLong("package_id"));
 				}
 			}
 		}
@@ -45,7 +46,7 @@ public class PackageDAO extends BaseDAO {
 		return pkg;
 	}
 
-	public Set<PackageModule> getModulesWhithChildsByModule(Module module,
+	public Set<PackageModule> getPackagesWhithChildsByModule(Module module,
 			Connection con) throws SQLException, ClassNotFoundException {
 		Set<PackageModule> pkgs = new HashSet<PackageModule>();
 		try (PreparedStatement prepStatement = con
@@ -56,7 +57,7 @@ public class PackageDAO extends BaseDAO {
 				while (result.next()) {
 					PackageModule pkg = new PackageModule();
 					pkg.setName(result.getString("name"));
-					pkg.setId(result.getLong("id"));
+					pkg.setId(result.getLong("package_id"));
 					pkg.setModule(module);
 					pkgs.add(pkg);
 				}
@@ -70,9 +71,8 @@ public class PackageDAO extends BaseDAO {
 			throws ClassNotFoundException, SQLException {
 		try (PreparedStatement prepStatement = con
 				.prepareStatement(insertElement)) {
-			prepStatement.setLong(1, pkg.getId());
-			prepStatement.setString(2, pkg.getName());
-			prepStatement.setString(3, pkg.getModule().getId());
+			prepStatement.setString(1, pkg.getName());
+			prepStatement.setString(2, pkg.getModule().getId());
 
 			return prepStatement.execute();
 		}
@@ -88,5 +88,12 @@ public class PackageDAO extends BaseDAO {
 		}
 
 		return true;
+	}
+	
+	public boolean delete(Long id, Connection con) throws SQLException{
+		try(PreparedStatement prepStatement = con.prepareStatement(removePackage)){
+			prepStatement.setLong(1, id);
+			return prepStatement.execute();
+		}
 	}
 }

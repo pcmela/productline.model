@@ -48,7 +48,7 @@ public class ModuleDAO extends BaseDAO {
 							.getModulesWhithChildsByModule(m, con));
 					m.setElements(elementDAO.getModulesWhithChildsByModule(m,
 							con));
-					m.setPackages(packageDao.getModulesWhithChildsByModule(m,
+					m.setPackages(packageDao.getPackagesWhithChildsByModule(m,
 							con));
 					module.add(m);
 				}
