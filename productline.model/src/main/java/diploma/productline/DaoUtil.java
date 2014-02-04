@@ -2,6 +2,8 @@ package diploma.productline;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -16,5 +18,29 @@ public class DaoUtil {
 				properties.getProperty("password"));
 
 		return con;
+	}
+	
+	public static void cloaseConnection(Connection con){
+		try {
+			con.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void closeResultSet(ResultSet rs){
+		try {
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void closePrepareStatement(PreparedStatement ps){
+		try {
+			ps.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }
