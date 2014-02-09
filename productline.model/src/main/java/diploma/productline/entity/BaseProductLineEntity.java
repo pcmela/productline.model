@@ -1,6 +1,16 @@
 package diploma.productline.entity;
 
-public interface BaseProductLineEntity {
+public abstract class BaseProductLineEntity {
 
-	public String getName();
+	protected boolean isDirty = false;
+	public abstract String getName();
+	
+	public boolean isDirty() {
+		return isDirty;
+	}
+	public void setDirty(boolean isDirty) {
+		this.isDirty = isDirty;
+	}
+	
+	
 }

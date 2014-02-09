@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.Set;
 
 import diploma.productline.entity.Module;
@@ -16,10 +15,8 @@ public class VariabilityDAO extends BaseDAO {
 	private final String selectVariability = "SELECT variability_id, name FROM variability WHERE id like ?";
 	private final String selectVariabilityByPL = "SELECT variability_id, name FROM variability WHERE module_id like ?";
 	private final String insertVariability = "INSERT INTO variability VALUES (?,?,?,?)";
+	private final String update = "UPDATE variability SET name = ?, description = ? WHERE variability_id = ?";
 
-	public VariabilityDAO(Properties properties) {
-		super(properties);
-	}
 
 	public Variability getVariability(String id, Connection con)
 			throws ClassNotFoundException, SQLException {
@@ -44,7 +41,7 @@ public class VariabilityDAO extends BaseDAO {
 		return variability;
 	}
 
-	public Set<Variability> getModulesWhithChildsByModule(Module module,
+	public Set<Variability> getVariabilitiesWhithChildsByModule(Module module,
 			Connection con) throws SQLException, ClassNotFoundException {
 		Set<Variability> variabilities = new HashSet<Variability>();
 		try (PreparedStatement prepStatement = con
@@ -57,6 +54,25 @@ public class VariabilityDAO extends BaseDAO {
 					v.setName(result.getString("name"));
 					v.setId(result.getString("variability_id"));
 					v.setModule(module);
+					variabilities.add(v);
+				}
+			}
+		}
+		return variabilities;
+	}
+	
+	public Set<Variability> getVariabilitiesByModuleId(String moduleId,
+			Connection con) throws SQLException, ClassNotFoundException {
+		Set<Variability> variabilities = new HashSet<Variability>();
+		try (PreparedStatement prepStatement = con
+				.prepareStatement(selectVariabilityByPL)) {
+			prepStatement.setString(1, moduleId);
+			try (ResultSet result = prepStatement.executeQuery()) {
+
+				while (result.next()) {
+					Variability v = new Variability();
+					v.setName(result.getString("name"));
+					v.setId(result.getString("variability_id"));
 					variabilities.add(v);
 				}
 			}
@@ -85,5 +101,14 @@ public class VariabilityDAO extends BaseDAO {
 		}
 
 		return true;
+	}
+	
+	public int update(Variability variability, Connection con) throws SQLException{
+		try(PreparedStatement prepareStmt = con.prepareStatement(update)){
+			prepareStmt.setString(1, variability.getName());
+			prepareStmt.setString(2, variability.getDescription());
+			prepareStmt.setString(3, variability.getId());
+			return prepareStmt.executeUpdate();
+		}
 	}
 }

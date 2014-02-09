@@ -9,7 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class PackageModule implements BaseProductLineEntity {
+public class PackageModule extends BaseProductLineEntity {
 
 	@Id
 	@Column(name="package_id")

@@ -16,7 +16,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 @Entity
-public class Module implements BaseProductLineEntity{
+public class Module extends BaseProductLineEntity{
 
 	@Id
 	@Column(name="module_id")
@@ -31,7 +31,7 @@ public class Module implements BaseProductLineEntity{
 	private String description;
 	
 	@Column(nullable=false)
-	private boolean isVariable;
+	private boolean variable;
 	
 	@ManyToOne
 	@JoinColumn(name="product_line_id")
@@ -50,11 +50,12 @@ public class Module implements BaseProductLineEntity{
 	private Set<PackageModule> packages;
 	
 	
+	
 	public boolean isVariable() {
-		return isVariable;
+		return variable;
 	}
-	public void setVariable(boolean isVariable) {
-		this.isVariable = isVariable;
+	public void setVariable(boolean variable) {
+		this.variable = variable;
 	}
 	public ProductLine getProductLine() {
 		return productLine;

@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import javax.validation.constraints.*;
 
 @Entity
-public class Type implements BaseProductLineEntity{
+public class Type extends BaseProductLineEntity{
 
 	@Id
 	@Column(name="type_id")

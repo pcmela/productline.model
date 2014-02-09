@@ -8,7 +8,7 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.*;
 
 @Entity
-public class Element implements BaseProductLineEntity{
+public class Element extends BaseProductLineEntity{
 
 	@Id
 	@Column(name="element_id")

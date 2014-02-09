@@ -17,10 +17,8 @@ public class ProductLineDAO extends BaseDAO {
 
 	private final String selectProductLine = "SELECT name, description FROM productline WHERE name = ?";
 	private final String insertProductLine = "INSERT INTO productline VALUES (?,?,?)";
+	private final String updateProductLine = "UPDATE productline SET name = ?, description = ? WHERE name = ?";
 
-	public ProductLineDAO(Properties properties) {
-		super(properties);
-	}
 
 	public static void createDatabaseStructure(Properties properties, File ddl,
 			Connection connection) throws ClassNotFoundException, SQLException,
@@ -38,7 +36,7 @@ public class ProductLineDAO extends BaseDAO {
 	private ProductLine getProductLineFromDB(Connection con, String name)
 			throws ClassNotFoundException, SQLException {
 
-		ModuleDAO moduleDao = new ModuleDAO(this.properties);
+		ModuleDAO moduleDao = new ModuleDAO();
 
 		ProductLine productLine = null;
 		try (PreparedStatement prepStatement = con
@@ -80,10 +78,19 @@ public class ProductLineDAO extends BaseDAO {
 
 	public boolean createAll(ProductLine productLine, Connection connection)
 			throws ClassNotFoundException, SQLException {
-		ModuleDAO moduleDao = new ModuleDAO(properties);
+		ModuleDAO moduleDao = new ModuleDAO();
 
 		this.save(productLine, connection);
 		moduleDao.createAll(productLine.getModules(), connection);
 		return false;
+	}
+	
+	public int update(ProductLine productLine, Connection con) throws SQLException{
+		try(PreparedStatement prepareStmt = con.prepareStatement(updateProductLine)){
+			prepareStmt.setString(1, productLine.getName());
+			prepareStmt.setString(2, productLine.getDescription());
+			prepareStmt.setString(3, productLine.getName());
+			return prepareStmt.executeUpdate();
+		}
 	}
 }

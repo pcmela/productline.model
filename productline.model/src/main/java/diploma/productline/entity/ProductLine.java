@@ -23,7 +23,7 @@ import org.hibernate.annotations.CascadeType;
  */
 @Entity
 @Table(name="product_line")
-public class ProductLine implements BaseProductLineEntity{
+public class ProductLine extends BaseProductLineEntity{
 
 	/*@Id
 	@Column(name="product_line_id")

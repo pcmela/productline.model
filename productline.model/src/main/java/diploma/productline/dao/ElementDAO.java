@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.Set;
 
 import diploma.productline.entity.Element;
@@ -17,10 +16,8 @@ public class ElementDAO extends BaseDAO {
 	private final String selectElement = "SELECT element_id, name, description FROM element WHERE id = ?";
 	private final String selectElementByModule = "SELECT element_id, name, description FROM element WHERE module_id = ?";
 	private final String insertElement = "INSERT INTO element (name,description,type_id,module_id) VALUES (?,?,?,?)";
+	private final String update = "UPDATE element SET name = ?, description = ? WHERE element_id = ?";
 
-	public ElementDAO(Properties properties) {
-		super(properties);
-	}
 
 	public Element getElement(String id, Connection con)
 			throws ClassNotFoundException, SQLException {
@@ -89,5 +86,14 @@ public class ElementDAO extends BaseDAO {
 		}
 
 		return true;
+	}
+	
+	public int update(Element module, Connection con) throws SQLException{
+		try(PreparedStatement prepareStmt = con.prepareStatement(update)){
+			prepareStmt.setString(1, module.getName());
+			prepareStmt.setString(2, module.getDescription());
+			prepareStmt.setString(3, module.getId());
+			return prepareStmt.executeUpdate();
+		}
 	}
 }

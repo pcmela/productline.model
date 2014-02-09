@@ -37,7 +37,7 @@ public class App {
 
 			Connection conn;
 			//try {
-				ProductLineDAO dao = new ProductLineDAO(p);
+				//ProductLineDAO dao = new ProductLineDAO(p);
 				// ProductLineDAO.createDatabaseStructure(p);
 				/*
 				 * System.out.println("created structure");
