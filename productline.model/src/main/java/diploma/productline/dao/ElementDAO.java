@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import java.util.HashSet;
 import java.util.Set;
@@ -35,7 +36,7 @@ public class ElementDAO extends BaseDAO {
 				while (result.next()) {
 					element = new Element();
 					element.setName(result.getString("name"));
-					element.setId(result.getString("element_id"));
+					element.setId(result.getInt("element_id"));
 					element.setDescription(result.getString("description"));
 				}
 			}
@@ -48,13 +49,13 @@ public class ElementDAO extends BaseDAO {
 		Set<Element> elements = new HashSet<Element>();
 		try (PreparedStatement prepStatement = con
 				.prepareStatement(selectElementByModule)) {
-			prepStatement.setString(1, module.getId());
+			prepStatement.setInt(1, module.getId());
 			try (ResultSet result = prepStatement.executeQuery()) {
 
 				while (result.next()) {
 					Element e = new Element();
 					e.setName(result.getString("name"));
-					e.setId(result.getString("element_id"));
+					e.setId(result.getInt("element_id"));
 					e.setDescription(result.getString("description"));
 					e.setModule(module);
 					elements.add(e);
@@ -64,15 +65,20 @@ public class ElementDAO extends BaseDAO {
 		return elements;
 	}
 
-	public boolean save(Element element, Connection con)
+	public int save(Element element, Connection con)
 			throws ClassNotFoundException, SQLException {
 		try (PreparedStatement prepStatement = con
-				.prepareStatement(insertElement)) {
+				.prepareStatement(insertElement, Statement.RETURN_GENERATED_KEYS)) {
 			prepStatement.setString(1, element.getName());
 			prepStatement.setString(2, element.getDescription());
 			prepStatement.setNull(3, Types.NULL);
-			prepStatement.setString(4, element.getModule().getId());
-			return prepStatement.execute();
+			prepStatement.setInt(4, element.getModule().getId());
+			prepStatement.execute();
+
+			try (ResultSet rs = prepStatement.getGeneratedKeys()) {
+				rs.next();
+				return rs.getInt(1);
+			}
 		}
 	}
 
@@ -92,7 +98,7 @@ public class ElementDAO extends BaseDAO {
 		try(PreparedStatement prepareStmt = con.prepareStatement(update)){
 			prepareStmt.setString(1, module.getName());
 			prepareStmt.setString(2, module.getDescription());
-			prepareStmt.setString(3, module.getId());
+			prepareStmt.setInt(3, module.getId());
 			return prepareStmt.executeUpdate();
 		}
 	}

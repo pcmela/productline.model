@@ -1,26 +1,10 @@
 package diploma.productline.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
-@Entity
 public class PackageModule extends BaseProductLineEntity {
 
-	@Id
-	@Column(name="package_id")
-	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
-	
-	@Column(length = 50)
 	private String name;
-
-	@ManyToOne
-	@JoinColumn(name="module_id")
 	private Module module; 
 	
 	public Long getId() {

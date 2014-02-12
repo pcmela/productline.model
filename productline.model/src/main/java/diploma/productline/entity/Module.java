@@ -3,50 +3,15 @@ package diploma.productline.entity;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-
-@Entity
 public class Module extends BaseProductLineEntity{
 
-	@Id
-	@Column(name="module_id")
-	@NotNull
-	private String id;
-	
-	@Column(length=50)
-	@NotNull
+	private Integer id;
 	private String name;
-	
-	@Column(length=150)
 	private String description;
-	
-	@Column(nullable=false)
 	private boolean variable;
-	
-	@ManyToOne
-	@JoinColumn(name="product_line_id")
 	private ProductLine productLine;
-	
-	@OneToMany(mappedBy="module",fetch=FetchType.EAGER)
-	@Cascade(CascadeType.ALL)
 	private Set<Variability> variabilities;
-	
-	@OneToMany(mappedBy="module",fetch=FetchType.EAGER)
-	@Cascade(CascadeType.ALL)
 	private Set<Element> elements;
-	
-	@OneToMany(mappedBy="module",fetch=FetchType.EAGER)
-	@Cascade(CascadeType.ALL)
 	private Set<PackageModule> packages;
 	
 	
@@ -63,19 +28,16 @@ public class Module extends BaseProductLineEntity{
 	public void setProductLine(ProductLine productLine) {
 		this.productLine = productLine;
 	}
-	public String getId() {
+	public Integer getId() {
 		return id;
 	}
-	public void setId(String id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
-		if(name != null && id == null){
-			id = name.replaceAll("( )*", "_");
-		}
 		this.name = name;
 	}
 	public String getDescription() {

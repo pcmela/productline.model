@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -12,28 +13,28 @@ import diploma.productline.entity.Module;
 import diploma.productline.entity.ProductLine;
 
 public class ModuleDAO extends BaseDAO {
-	private final String selectModule = "SELECT module_id, name, description, is_variable, product_line_id FROM module WHERE module_id like ?";
-	private final String selectModuleByPL = "SELECT module_id, name, description, is_variable, product_line_id FROM module WHERE product_line_id like ?";
-	private final String insertModule = "INSERT INTO module (module_id,name,description,is_variable,product_line_id) VALUES (?,?,?,?,?)";
+	private final String selectModule = "SELECT module_id, name, description, is_variable, product_line_id FROM module WHERE module_id = ?";
+	private final String selectModuleByPL = "SELECT module_id, name, description, is_variable, product_line_id FROM module WHERE product_line_id = ?";
+	private final String insertModule = "INSERT INTO module (name,description,is_variable,product_line_id) VALUES (?,?,?,?)";
 	private final String update = "UPDATE module SET name = ?, description = ?, is_variable = ? WHERE module_id = ?";
 
 
-	public Module getModule(String id, Connection con)
+	public Module getModule(int id, Connection con)
 			throws ClassNotFoundException, SQLException {
 		return getModuleFromDB(con, id);
 
 	}
 	
-	public Set<Module> getModuleByProductLine(Connection con, String productline_id) throws SQLException{
+	public Set<Module> getModuleByProductLine(Connection con, int productline_id) throws SQLException{
 		Set<Module> module = new HashSet<Module>();
 		try (PreparedStatement prepStatement = con
 				.prepareStatement(selectModuleByPL)) {
-			prepStatement.setString(1, productline_id);
+			prepStatement.setInt(1, productline_id);
 			try (ResultSet result = prepStatement.executeQuery()) {
 
 				while (result.next()) {
 					Module m = new Module();
-					m.setId(result.getString("module_id")); 
+					m.setId(result.getInt("module_id")); 
 					m.setName(result.getString("name"));
 					m.setDescription(result.getString("description"));
 					m.setVariable(result.getBoolean("is_variable"));
@@ -54,12 +55,12 @@ public class ModuleDAO extends BaseDAO {
 		Set<Module> module = new HashSet<Module>();
 		try (PreparedStatement prepStatement = con
 				.prepareStatement(selectModuleByPL)) {
-			prepStatement.setString(1, productLine.getName());
+			prepStatement.setInt(1, productLine.getId());
 			try (ResultSet result = prepStatement.executeQuery()) {
 
 				while (result.next()) {
 					Module m = new Module();
-					m.setId(result.getString("module_id")); 
+					m.setId(result.getInt("module_id")); 
 					m.setName(result.getString("name"));
 					m.setDescription(result.getString("description"));
 					m.setVariable(result.getBoolean("is_variable"));
@@ -77,17 +78,17 @@ public class ModuleDAO extends BaseDAO {
 		}
 	}
 
-	private Module getModuleFromDB(Connection con, String id)
+	private Module getModuleFromDB(Connection con, int id)
 			throws ClassNotFoundException, SQLException {
 		Module module = null;
 		try (PreparedStatement prepStatement = con
 				.prepareStatement(selectModule)) {
-			prepStatement.setString(1, id);
+			prepStatement.setInt(1, id);
 			try (ResultSet result = prepStatement.executeQuery()) {
 
 				while (result.next()) {
 					module = new Module();
-					module.setId(result.getString("module_id"));
+					module.setId(result.getInt("module_id"));
 					module.setName(result.getString("name"));
 					module.setDescription(result.getString("description"));
 					module.setVariable(result.getBoolean("is_variable"));
@@ -98,16 +99,20 @@ public class ModuleDAO extends BaseDAO {
 		}
 	}
 
-	public boolean save(Module module, Connection con)
+	public int save(Module module, Connection con)
 			throws ClassNotFoundException, SQLException {
 		try (PreparedStatement prepStatement = con
-				.prepareStatement(insertModule)) {
-			prepStatement.setString(1, module.getId());
-			prepStatement.setString(2, module.getName());
-			prepStatement.setString(3, module.getDescription());
-			prepStatement.setBoolean(4, module.isVariable());
-			prepStatement.setString(5, module.getProductLine().getName());
-			return prepStatement.execute();
+				.prepareStatement(insertModule, Statement.RETURN_GENERATED_KEYS)) {
+			prepStatement.setString(1, module.getName());
+			prepStatement.setString(2, module.getDescription());
+			prepStatement.setBoolean(3, module.isVariable());
+			prepStatement.setInt(4, module.getProductLine().getId());
+			prepStatement.execute();
+			
+			try (ResultSet rs = prepStatement.getGeneratedKeys()) {
+				rs.next();
+				return rs.getInt(1);
+			}
 		}
 	}
 
@@ -118,7 +123,8 @@ public class ModuleDAO extends BaseDAO {
 		PackageDAO packageDao = new PackageDAO();
 
 		for (Module m : modules) {
-			save(m, connection);
+			int id = save(m, connection);
+			m.setId(id);
 			variabilityDAO.createCollection(m.getVariabilities(), connection);
 			elementDao.createCollection(m.getElements(), connection);
 			packageDao.createCollection(m.getPackages(), connection);
@@ -144,7 +150,7 @@ public class ModuleDAO extends BaseDAO {
 			prepareStmt.setString(1, module.getName());
 			prepareStmt.setString(2, module.getDescription());
 			prepareStmt.setBoolean(3, module.isVariable());
-			prepareStmt.setString(4, module.getId());
+			prepareStmt.setInt(4, module.getId());
 			return prepareStmt.executeUpdate();
 		}
 	}

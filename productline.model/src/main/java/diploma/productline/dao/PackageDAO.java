@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -85,7 +86,7 @@ public class PackageDAO extends BaseDAO {
 		Set<PackageModule> pkgs = new HashSet<PackageModule>();
 		try (PreparedStatement prepStatement = con
 				.prepareStatement(selectPackageByModule)) {
-			prepStatement.setString(1, module.getId());
+			prepStatement.setInt(1, module.getId());
 			try (ResultSet result = prepStatement.executeQuery()) {
 
 				while (result.next()) {
@@ -101,14 +102,17 @@ public class PackageDAO extends BaseDAO {
 		return pkgs;
 	}
 
-	public boolean save(PackageModule pkg, Connection con)
+	public int save(PackageModule pkg, Connection con)
 			throws ClassNotFoundException, SQLException {
 		try (PreparedStatement prepStatement = con
-				.prepareStatement(insertElement)) {
+				.prepareStatement(insertElement, Statement.RETURN_GENERATED_KEYS)) {
 			prepStatement.setString(1, pkg.getName());
-			prepStatement.setString(2, pkg.getModule().getId());
+			prepStatement.setInt(2, pkg.getModule().getId());
 
-			return prepStatement.execute();
+			try (ResultSet rs = prepStatement.getGeneratedKeys()) {
+				rs.next();
+				return rs.getInt(1);
+			}
 		}
 	}
 

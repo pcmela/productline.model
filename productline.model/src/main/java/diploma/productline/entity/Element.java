@@ -1,33 +1,15 @@
 package diploma.productline.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.validation.constraints.*;
 
-@Entity
+
+
 public class Element extends BaseProductLineEntity{
 
-	@Id
-	@Column(name="element_id")
-	@NotNull
-	private String id;
-	
-	@Column(length=50)
-	@NotNull
-	private String name;
-	
-	@Column(length=150)
-	private String description;
-	
-	@ManyToOne
-	@JoinColumn(name="type_id")
+
+	private Integer id;
+	private String name;	
+	private String description;	
 	private Type type;
-	
-	@ManyToOne
-	@JoinColumn(name="module_id")
 	private Module module; 
 	
 	
@@ -39,10 +21,10 @@ public class Element extends BaseProductLineEntity{
 	public void setModule(Module module) {
 		this.module = module;
 	}
-	public String getId() {
+	public Integer getId() {
 		return id;
 	}
-	public void setId(String id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 	public String getName() {

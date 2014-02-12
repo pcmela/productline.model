@@ -3,62 +3,34 @@ package diploma.productline.entity;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-
 
 /**
  * 
  * @author pcmela
  * 
  */
-@Entity
-@Table(name="product_line")
 public class ProductLine extends BaseProductLineEntity{
 
-	/*@Id
-	@Column(name="product_line_id")
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	private Long id; */
-	
-	@Id
-	@Column(length=50)
+	private Integer id;	
 	private String name;
-	
-	@Column(length=150)
 	private String description;
-	
-	@OneToMany(mappedBy="productLine",fetch=FetchType.EAGER)
-	@Cascade(CascadeType.ALL)
 	private Set<Module> modules;
+	private ProductLine parent;
 	
-	@ManyToOne
-	@JoinColumn(name="product_line_id")
-	private ProductLine productLine;
-	
-	/*public Long getId() {
+	public Integer getId() {
 		return id;
 	}
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
-	}*/
+	}
 	public String getName() {
 		return name;
 	}
-	public ProductLine getProductLine() {
-		return productLine;
+	public ProductLine getParent() {
+		return parent;
 	}
-	public void setProductLine(ProductLine productLine) {
-		this.productLine = productLine;
+	public void setParent(ProductLine productLine) {
+		this.parent = productLine;
 	}
 	public void setName(String name) {
 		this.name = name;

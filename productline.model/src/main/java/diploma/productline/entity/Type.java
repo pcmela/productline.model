@@ -1,31 +1,17 @@
 package diploma.productline.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
 
-import javax.validation.constraints.*;
-
-@Entity
 public class Type extends BaseProductLineEntity{
 
-	@Id
-	@Column(name="type_id")
-	@NotNull
-	private String id;
-	
-	@Column(length=50)
-	@NotNull
+	private int id;
 	private String name;
-	
-	@Column(length=150)
 	private String description;
 	
 	
-	public String getId() {
+	public int getId() {
 		return id;
 	}
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	public String getName() {

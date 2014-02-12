@@ -19,12 +19,10 @@ import diploma.productline.entity.Variability;
  * 
  */
 public class App {
-	private HibernateUtil hibernateUtil;
 
 	public static void main(String[] args) {
 		// String path = "C:\\Users\\IBM_ADMIN\\Desktop\\Neon.yaml";
 		App app = new App();
-		app.setHibernateUtil(new HibernateUtil());
 		// ProductLine prod = YamlExtractor.extract(path);
 
 		Properties p = new Properties();
@@ -131,12 +129,5 @@ public class App {
 
 	}
 
-	public HibernateUtil getHibernateUtil() {
-		return hibernateUtil;
-	}
-
-	public void setHibernateUtil(HibernateUtil hibernateUtil) {
-		this.hibernateUtil = hibernateUtil;
-	}
 
 }
