@@ -45,7 +45,7 @@ public class ElementDAO extends BaseDAO {
 	}
 
 	public Set<Element> getModulesWhithChildsByModule(Module module,
-			Connection con) throws SQLException, ClassNotFoundException {
+			Connection con) throws SQLException {
 		Set<Element> elements = new HashSet<Element>();
 		try (PreparedStatement prepStatement = con
 				.prepareStatement(selectElementByModule)) {

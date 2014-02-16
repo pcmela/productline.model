@@ -43,7 +43,7 @@ public class VariabilityDAO extends BaseDAO {
 	}
 
 	public Set<Variability> getVariabilitiesWhithChildsByModule(Module module,
-			Connection con) throws SQLException, ClassNotFoundException {
+			Connection con) throws SQLException {
 		Set<Variability> variabilities = new HashSet<Variability>();
 		try (PreparedStatement prepStatement = con
 				.prepareStatement(selectVariabilityByPL)) {

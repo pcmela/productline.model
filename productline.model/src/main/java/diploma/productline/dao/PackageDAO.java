@@ -82,7 +82,7 @@ public class PackageDAO extends BaseDAO {
 	}*/
 
 	public Set<PackageModule> getPackagesWhithChildsByModule(Module module,
-			Connection con) throws SQLException, ClassNotFoundException {
+			Connection con) throws SQLException {
 		Set<PackageModule> pkgs = new HashSet<PackageModule>();
 		try (PreparedStatement prepStatement = con
 				.prepareStatement(selectPackageByModule)) {

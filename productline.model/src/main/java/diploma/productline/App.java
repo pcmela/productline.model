@@ -26,32 +26,21 @@ public class App {
 		// ProductLine prod = YamlExtractor.extract(path);
 
 		Properties p = new Properties();
-		p.setProperty("connection_url", "jdbc:h2:~/test2");
+		p.setProperty("connection_url", "jdbc:h2:C:/data/skola/runtime-EclipseApplication/test/database");
 		p.setProperty("username", "sa");
-		p.setProperty("password", "");
+		p.setProperty("password", "sa");
 
 		try {
 			Class.forName("org.h2.Driver");
-
-			Connection conn;
-			//try {
-				//ProductLineDAO dao = new ProductLineDAO(p);
-				// ProductLineDAO.createDatabaseStructure(p);
-				/*
-				 * System.out.println("created structure");
-				 * dao.createAll(getProductLine());
-				 * System.out.println("inserted");
-				 */
-				//ProductLine prd = dao.getProductLineWithChilds("p1");
-				/*System.out.println("ssadasdsad" + prd.getName());
-				for (Module m : prd.getModules()) {
-					System.out.println(m.getName());
-				}*/
-
-			/*} catch (SQLException e) {
+			
+			try(Connection con = DaoUtil.connect(p)){
+				ProductLineDAO pDao = new ProductLineDAO();
+				ProductLine pl = pDao.getProductLine(2, con);
+				System.out.println("s");
+			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}*/
+			}
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

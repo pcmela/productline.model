@@ -20,6 +20,17 @@ public class DaoUtil {
 		return con;
 	}
 	
+	public static Connection connect(String username, String password, String connectionString)
+			throws ClassNotFoundException, SQLException {
+		Class.forName("org.h2.Driver");
+		Connection con = DriverManager.getConnection(
+				connectionString,
+				username,
+				password);
+
+		return con;
+	}
+	
 	public static void cloaseConnection(Connection con){
 		try {
 			con.close();

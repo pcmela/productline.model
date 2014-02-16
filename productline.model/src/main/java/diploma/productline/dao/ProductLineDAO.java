@@ -27,21 +27,21 @@ public class ProductLineDAO extends BaseDAO {
 	private final String selectProductLinesByParent = "SELECT productline_id, name, description, parent_productline FROM productline WHERE parent_productline = ?";
 	private final String selectAllProductLine = "SELECT productline_id, name, description, parent_productline FROM productline";
 
-	public static void createDatabaseStructure(Properties properties, File ddl,
-			Connection connection) throws ClassNotFoundException, SQLException,
-			FileNotFoundException, IOException {
+	public static void createDatabaseStructure(File ddl, Connection connection)
+			throws ClassNotFoundException, SQLException, FileNotFoundException,
+			IOException {
 		ScriptRunner runner = new ScriptRunner(connection, true, true);
 		runner.runScript(new BufferedReader(new FileReader(ddl)));
 	}
 
 	public ProductLine getProductLine(int id, Connection connection)
-			throws ClassNotFoundException, SQLException {
-		ProductLine productLine = getProductLineFromDB(connection, id);
+			throws SQLException {
+		ProductLine productLine = getProductLineFromDBWithChild(connection, id);
 		return productLine;
 	}
 
-	private ProductLine getProductLineFromDB(Connection con, int id)
-			throws ClassNotFoundException, SQLException {
+	private ProductLine getProductLineFromDBWithChild(Connection con, int id)
+			throws SQLException {
 
 		ModuleDAO moduleDao = new ModuleDAO();
 
@@ -57,12 +57,12 @@ public class ProductLineDAO extends BaseDAO {
 					productLine.setName(result.getString("name"));
 					productLine.setDescription(result.getString("description"));
 					Integer parent = result.getInt("parent_productline");
-					if(result.wasNull()){
+					if (result.wasNull()) {
 						productLine.setParent(null);
-					}else{
+					} else {
 						productLine.setParent(getProductLine(parent, con));
 					}
-					
+
 				}
 
 				productLine.setModules(moduleDao
@@ -72,8 +72,35 @@ public class ProductLineDAO extends BaseDAO {
 		return productLine;
 	}
 	
-	private ProductLine[] getProductLinesByParentFromDB(Connection con, int parent_id)
-			throws ClassNotFoundException, SQLException {
+	private ProductLine getProductLineFromDB(Connection con, int id)
+			throws SQLException {
+
+		ProductLine productLine = null;
+		try (PreparedStatement prepStatement = con
+				.prepareStatement(selectProductLine)) {
+			prepStatement.setInt(1, id);
+			try (ResultSet result = prepStatement.executeQuery()) {
+
+				while (result.next()) {
+					productLine = new ProductLine();
+					productLine.setId(result.getInt("productline_id"));
+					productLine.setName(result.getString("name"));
+					productLine.setDescription(result.getString("description"));
+					Integer parent = result.getInt("parent_productline");
+					if (result.wasNull()) {
+						productLine.setParent(null);
+					} else {
+						productLine.setParent(getProductLine(parent, con));
+					}
+
+				}
+			}
+		}
+		return productLine;
+	}
+
+	private ProductLine[] getProductLinesByParentFromDB(Connection con,
+			int parent_id) throws ClassNotFoundException, SQLException {
 
 		ModuleDAO moduleDao = new ModuleDAO();
 
@@ -90,13 +117,14 @@ public class ProductLineDAO extends BaseDAO {
 					productLine.setName(result.getString("name"));
 					productLine.setDescription(result.getString("description"));
 					Integer parent = result.getInt("parent_productline");
-					if(result.wasNull()){
+					if (result.wasNull()) {
 						productLine.setParent(null);
-					}else{
+					} else {
 						productLine.setParent(getProductLine(parent, con));
 					}
 					productLine.setModules(moduleDao
-							.getModulesWhithChildsByProductLine(productLine, con));
+							.getModulesWhithChildsByProductLine(productLine,
+									con));
 					resultSet.add(productLine);
 				}
 			}
@@ -107,11 +135,11 @@ public class ProductLineDAO extends BaseDAO {
 	public ProductLine getProductLineWithChilds(int id, Connection con)
 			throws ClassNotFoundException, SQLException {
 		ProductLine productLine = null;
-		productLine = getProductLineFromDB(con, id);
+		productLine = getProductLineFromDBWithChild(con, id);
 
 		return productLine;
 	}
-	
+
 	public ProductLine[] getProductLineByParent(int parent_id, Connection con)
 			throws ClassNotFoundException, SQLException {
 		return getProductLinesByParentFromDB(con, parent_id);
@@ -119,16 +147,16 @@ public class ProductLineDAO extends BaseDAO {
 
 	public int save(ProductLine productLine, Connection con)
 			throws ClassNotFoundException, SQLException {
-		try (PreparedStatement prepStatement = con
-				.prepareStatement(insertProductLine, Statement.RETURN_GENERATED_KEYS)) {
+		try (PreparedStatement prepStatement = con.prepareStatement(
+				insertProductLine, Statement.RETURN_GENERATED_KEYS)) {
 			prepStatement.setString(1, productLine.getName());
 			prepStatement.setString(2, productLine.getDescription());
-			if(productLine.getParent() == null){
+			if (productLine.getParent() == null) {
 				prepStatement.setNull(3, Types.NULL);
-			}else{
+			} else {
 				prepStatement.setInt(3, productLine.getParent().getId());
 			}
-			prepStatement.execute();
+			boolean a = prepStatement.execute();
 
 			try (ResultSet rs = prepStatement.getGeneratedKeys()) {
 				rs.next();
@@ -157,17 +185,24 @@ public class ProductLineDAO extends BaseDAO {
 			return prepareStmt.executeUpdate();
 		}
 	}
-	
-	public Set<ProductLine> getProductLine(Connection con) throws SQLException{
+
+	public Set<ProductLine> getProductLine(Connection con) throws SQLException {
 		Set<ProductLine> set = new HashSet<ProductLine>();
-		try(PreparedStatement prepareStmt = con.prepareStatement(selectAllProductLine)){
+		try (PreparedStatement prepareStmt = con
+				.prepareStatement(selectAllProductLine)) {
 			ResultSet result = prepareStmt.executeQuery();
-			
-			while(result.next()){
+
+			while (result.next()) {
 				ProductLine p = new ProductLine();
 				p.setId(result.getInt("productline_id"));
 				p.setName(result.getString("name"));
 				p.setDescription(result.getString("description"));
+				Integer parent = result.getInt("parent_productline");
+				if(result.wasNull()){
+					p.setParent(null);
+				}else{
+					p.setParent(getProductLineFromDB(con, parent));
+				}
 				set.add(p);
 			}
 		}

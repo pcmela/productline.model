@@ -46,8 +46,7 @@ public class ModuleDAO extends BaseDAO {
 	}
 
 	public Set<Module> getModulesWhithChildsByProductLine(
-			ProductLine productLine, Connection con) throws SQLException,
-			ClassNotFoundException {
+			ProductLine productLine, Connection con) throws SQLException{
 		VariabilityDAO variabilityDao = new VariabilityDAO();
 		ElementDAO elementDAO = new ElementDAO();
 		PackageDAO packageDao = new PackageDAO();
