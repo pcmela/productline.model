@@ -25,6 +25,7 @@ public class ProductLineDAO extends BaseDAO {
 	private final String insertProductLine = "INSERT INTO productline (name, description, parent_productline) VALUES (?,?,?)";
 	private final String updateProductLine = "UPDATE productline SET name = ?, description = ? WHERE productline_id = ?";
 	private final String selectProductLinesByParent = "SELECT productline_id, name, description, parent_productline FROM productline WHERE parent_productline = ?";
+	private final String selectAllProductLine = "SELECT productline_id, name, description, parent_productline FROM productline";
 
 	public static void createDatabaseStructure(Properties properties, File ddl,
 			Connection connection) throws ClassNotFoundException, SQLException,
@@ -155,5 +156,21 @@ public class ProductLineDAO extends BaseDAO {
 			prepareStmt.setInt(3, productLine.getId());
 			return prepareStmt.executeUpdate();
 		}
+	}
+	
+	public Set<ProductLine> getProductLine(Connection con) throws SQLException{
+		Set<ProductLine> set = new HashSet<ProductLine>();
+		try(PreparedStatement prepareStmt = con.prepareStatement(selectAllProductLine)){
+			ResultSet result = prepareStmt.executeQuery();
+			
+			while(result.next()){
+				ProductLine p = new ProductLine();
+				p.setId(result.getInt("productline_id"));
+				p.setName(result.getString("name"));
+				p.setDescription(result.getString("description"));
+				set.add(p);
+			}
+		}
+		return set;
 	}
 }
