@@ -108,6 +108,8 @@ public class PackageDAO extends BaseDAO {
 				.prepareStatement(insertElement, Statement.RETURN_GENERATED_KEYS)) {
 			prepStatement.setString(1, pkg.getName());
 			prepStatement.setInt(2, pkg.getModule().getId());
+			
+			prepStatement.execute();
 
 			try (ResultSet rs = prepStatement.getGeneratedKeys()) {
 				rs.next();
