@@ -66,7 +66,7 @@ public class ModuleDAO extends BaseDAO {
 					m.setProductLine(productLine);
 					m.setVariabilities(variabilityDao
 							.getVariabilitiesWhithChildsByModule(m, con));
-					m.setElements(elementDAO.getModulesWhithChildsByModule(m,
+					m.setElements(elementDAO.getElementsWhithChildsByModule(m,
 							con));
 					m.setPackages(packageDao.getPackagesWhithChildsByModule(m,
 							con));

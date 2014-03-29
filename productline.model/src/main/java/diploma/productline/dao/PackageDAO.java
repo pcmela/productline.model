@@ -18,6 +18,7 @@ public class PackageDAO extends BaseDAO {
 	private final String selectPackageByModule = "SELECT package_id, name FROM package WHERE module_id like ?";
 	private final String insertElement = "INSERT INTO package (name, module_id) VALUES (?,?)";
 	private final String removePackage = "DELETE FROM package WHERE package_id = ?";
+	private final static String storedPackages = "select package_id, name from package where module_id IN( select module_id from module where product_line_id IN (select productline_id  from productline where productline_id = ?))";
 
 
 	public PackageModule getPackage(long id, Connection con)
@@ -60,6 +61,27 @@ public class PackageDAO extends BaseDAO {
 		}
 
 		return pkg;
+	}
+	
+	public static Set<PackageModule> getStoredPackages(Connection con, int id)
+			throws ClassNotFoundException, SQLException {
+		PackageModule pkg = null;
+		Set<PackageModule> set = new HashSet<>();
+		try (PreparedStatement prepStatement = con
+				.prepareStatement(storedPackages)) {
+			prepStatement.setInt(1, id);
+			try (ResultSet result = prepStatement.executeQuery()) {
+
+				while (result.next()) {
+					pkg = new PackageModule();
+					pkg.setName(result.getString("name"));
+					pkg.setId(result.getLong("package_id"));
+					set.add(pkg);
+				}
+			}
+		}
+
+		return set;
 	}
 	
 /*	private String getModuleId(Connection con, String name)

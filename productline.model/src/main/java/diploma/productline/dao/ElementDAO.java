@@ -14,10 +14,10 @@ import diploma.productline.entity.Module;
 
 public class ElementDAO extends BaseDAO {
 
-	private final String selectElement = "SELECT element_id, name, description FROM element WHERE id = ?";
-	private final String selectElementByModule = "SELECT element_id, name, description FROM element WHERE module_id = ?";
+	private final String selectElement = "SELECT element_id, name, description, type_id FROM element WHERE id = ?";
+	private final String selectElementByModule = "SELECT element_id, name, description, type_id FROM element WHERE module_id = ?";
 	private final String insertElement = "INSERT INTO element (name,description,type_id,module_id) VALUES (?,?,?,?)";
-	private final String update = "UPDATE element SET name = ?, description = ? WHERE element_id = ?";
+	private final String update = "UPDATE element SET name = ?, description = ?, type_id = ? WHERE element_id = ?";
 
 
 	public Element getElement(String id, Connection con)
@@ -27,6 +27,8 @@ public class ElementDAO extends BaseDAO {
 
 	private Element getElementFromDB(Connection con, String id)
 			throws ClassNotFoundException, SQLException {
+		ElementTypeDAO etDao = new ElementTypeDAO();
+		
 		Element element = null;
 		try (PreparedStatement prepStatement = con
 				.prepareStatement(selectElement)) {
@@ -38,14 +40,19 @@ public class ElementDAO extends BaseDAO {
 					element.setName(result.getString("name"));
 					element.setId(result.getInt("element_id"));
 					element.setDescription(result.getString("description"));
+					element.setType(etDao.getElementType(con, result.getInt("type_id")));
 				}
 			}
 		}
 		return element;
 	}
 
-	public Set<Element> getModulesWhithChildsByModule(Module module,
+	public Set<Element> getElementsWhithChildsByModule(Module module,
 			Connection con) throws SQLException {
+		ResourceDao rDao = new ResourceDao();
+		ElementTypeDAO etDao = new ElementTypeDAO();
+		
+		
 		Set<Element> elements = new HashSet<Element>();
 		try (PreparedStatement prepStatement = con
 				.prepareStatement(selectElementByModule)) {
@@ -57,7 +64,9 @@ public class ElementDAO extends BaseDAO {
 					e.setName(result.getString("name"));
 					e.setId(result.getInt("element_id"));
 					e.setDescription(result.getString("description"));
+					e.setType(etDao.getElementType(con, result.getInt("type_id")));
 					e.setModule(module);
+					e.setResources(rDao.getResourceWhithChildsByElement(e, con));
 					elements.add(e);
 				}
 			}
@@ -71,7 +80,11 @@ public class ElementDAO extends BaseDAO {
 				.prepareStatement(insertElement, Statement.RETURN_GENERATED_KEYS)) {
 			prepStatement.setString(1, element.getName());
 			prepStatement.setString(2, element.getDescription());
-			prepStatement.setNull(3, Types.NULL);
+			if(element.getType() == null){
+				prepStatement.setNull(3, Types.NULL);
+			}else{
+				prepStatement.setInt(3, element.getType().getId());
+			}
 			prepStatement.setInt(4, element.getModule().getId());
 			prepStatement.execute();
 
@@ -94,11 +107,12 @@ public class ElementDAO extends BaseDAO {
 		return true;
 	}
 	
-	public int update(Element module, Connection con) throws SQLException{
+	public int update(Element element, Connection con) throws SQLException{
 		try(PreparedStatement prepareStmt = con.prepareStatement(update)){
-			prepareStmt.setString(1, module.getName());
-			prepareStmt.setString(2, module.getDescription());
-			prepareStmt.setInt(3, module.getId());
+			prepareStmt.setString(1, element.getName());
+			prepareStmt.setString(2, element.getDescription());
+			prepareStmt.setInt(3, element.getType().getId());
+			prepareStmt.setInt(4, element.getId());
 			return prepareStmt.executeUpdate();
 		}
 	}

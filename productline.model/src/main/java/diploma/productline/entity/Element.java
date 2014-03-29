@@ -1,5 +1,7 @@
 package diploma.productline.entity;
 
+import java.util.Set;
+
 
 
 
@@ -11,10 +13,15 @@ public class Element extends BaseProductLineEntity{
 	private String description;	
 	private Type type;
 	private Module module; 
+	private Set<Resource> resources;
+	private String textOfType;
 	
-	
-	
-	
+	public Set<Resource> getResources() {
+		return resources;
+	}
+	public void setResources(Set<Resource> resources) {
+		this.resources = resources;
+	}
 	public Module getModule() {
 		return module;
 	}
@@ -43,7 +50,20 @@ public class Element extends BaseProductLineEntity{
 		return type;
 	}
 	public void setType(Type type) {
+		textOfType = type.getName();
 		this.type = type;
+	}
+	
+	public String getTextOfType() {
+		return textOfType;
+	}
+	public void setTextOfType(String textOfType) {
+		Type t = new Type();
+		ElementType et = ElementType.get(textOfType);
+		t.setId(et.getId());
+		t.setName(et.toString());
+		type = t;
+		this.textOfType = textOfType;
 	}
 	@Override
 	public String toString() {
