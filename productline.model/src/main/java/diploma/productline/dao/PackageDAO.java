@@ -124,7 +124,7 @@ public class PackageDAO extends BaseDAO {
 		return pkgs;
 	}
 
-	public int save(PackageModule pkg, Connection con)
+	public long save(PackageModule pkg, Connection con)
 			throws ClassNotFoundException, SQLException {
 		try (PreparedStatement prepStatement = con
 				.prepareStatement(insertElement, Statement.RETURN_GENERATED_KEYS)) {
@@ -135,7 +135,7 @@ public class PackageDAO extends BaseDAO {
 
 			try (ResultSet rs = prepStatement.getGeneratedKeys()) {
 				rs.next();
-				return rs.getInt(1);
+				return rs.getLong(1);
 			}
 		}
 	}

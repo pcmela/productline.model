@@ -53,7 +53,7 @@ public class ResourceDao extends BaseDAO {
 		return true;
 	}
 	
-	public boolean save(Resource resource, Connection con)
+	public int save(Resource resource, Connection con)
 			throws ClassNotFoundException, SQLException {
 		try(PreparedStatement prepStatment = con.prepareStatement(checkIfResourceExist)){
 			prepStatment.setString(1, resource.getRelativePath());
@@ -64,7 +64,7 @@ public class ResourceDao extends BaseDAO {
 					break;
 				}
 				if(exist){
-					return false;
+					return -1;
 				}
 			}
 			
@@ -78,7 +78,10 @@ public class ResourceDao extends BaseDAO {
 			prepStatement.setInt(4, resource.getElement().getId());
 			prepStatement.execute();
 			
-			return true;
+			try (ResultSet rs = prepStatement.getGeneratedKeys()) {
+				rs.next();
+				return rs.getInt(1);
+			}
 		}
 	}
 	
