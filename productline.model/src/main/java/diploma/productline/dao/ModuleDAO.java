@@ -9,14 +9,17 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
+import diploma.productline.entity.Element;
 import diploma.productline.entity.Module;
 import diploma.productline.entity.ProductLine;
+import diploma.productline.entity.Variability;
 
 public class ModuleDAO extends BaseDAO {
 	private final String selectModule = "SELECT module_id, name, description, is_variable, product_line_id FROM module WHERE module_id = ?";
 	private final String selectModuleByPL = "SELECT module_id, name, description, is_variable, product_line_id FROM module WHERE product_line_id = ?";
 	private final String insertModule = "INSERT INTO module (name,description,is_variable,product_line_id) VALUES (?,?,?,?)";
 	private final String update = "UPDATE module SET name = ?, description = ?, is_variable = ? WHERE module_id = ?";
+	private final String remove = "DELETE FROM module WHERE module_id = ?";
 
 
 	public Module getModule(int id, Connection con)
@@ -154,4 +157,21 @@ public class ModuleDAO extends BaseDAO {
 		}
 	}
 
+	public boolean delete(Module m, Connection con) throws SQLException{
+		VariabilityDAO vDao = new VariabilityDAO();
+		ElementDAO eDao = new ElementDAO();
+		
+		for(Variability v : m.getVariabilities()){
+			vDao.delete(v.getId(), con);
+		}
+		
+		for(Element e : m.getElements()){
+			eDao.delete(e, con);
+		}
+		
+		try(PreparedStatement prepStatement = con.prepareStatement(remove)){
+			prepStatement.setLong(1, m.getId());
+			return prepStatement.execute();
+		}
+	}
 }

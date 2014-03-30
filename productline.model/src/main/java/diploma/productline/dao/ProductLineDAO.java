@@ -17,7 +17,10 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import diploma.productline.entity.Element;
+import diploma.productline.entity.Module;
 import diploma.productline.entity.ProductLine;
+import diploma.productline.entity.Variability;
 
 public class ProductLineDAO extends BaseDAO {
 
@@ -27,6 +30,7 @@ public class ProductLineDAO extends BaseDAO {
 	private final String selectProductLinesByParent = "SELECT productline_id, name, description, parent_productline FROM productline WHERE parent_productline = ?";
 	private final String selectAllProductLine = "SELECT productline_id, name, description, parent_productline FROM productline";
 	private static final String selectNamOfChild = "select name from productline where parent_productline = ?";
+	private final String remove = "DELETE FROM productline WHERE productline_id = ?";
 
 	public static void createDatabaseStructure(File ddl, Connection connection)
 			throws ClassNotFoundException, SQLException, FileNotFoundException,
@@ -223,5 +227,18 @@ public class ProductLineDAO extends BaseDAO {
 			}
 		}
 		return set;
+	}
+	
+	public boolean delete(ProductLine p, Connection con) throws SQLException{
+		ModuleDAO mDao = new ModuleDAO();
+		
+		for(Module m : p.getModules()){
+			mDao.delete(m, con);
+		}
+		
+		try(PreparedStatement prepStatement = con.prepareStatement(remove)){
+			prepStatement.setLong(1, p.getId());
+			return prepStatement.execute();
+		}
 	}
 }

@@ -11,6 +11,7 @@ import java.util.Set;
 
 import diploma.productline.entity.Element;
 import diploma.productline.entity.Module;
+import diploma.productline.entity.Resource;
 
 public class ElementDAO extends BaseDAO {
 
@@ -18,6 +19,7 @@ public class ElementDAO extends BaseDAO {
 	private final String selectElementByModule = "SELECT element_id, name, description, type_id FROM element WHERE module_id = ?";
 	private final String insertElement = "INSERT INTO element (name,description,type_id,module_id) VALUES (?,?,?,?)";
 	private final String update = "UPDATE element SET name = ?, description = ?, type_id = ? WHERE element_id = ?";
+	private final String remove = "DELETE FROM element WHERE element_id = ?";
 
 
 	public Element getElement(String id, Connection con)
@@ -114,6 +116,17 @@ public class ElementDAO extends BaseDAO {
 			prepareStmt.setInt(3, element.getType().getId());
 			prepareStmt.setInt(4, element.getId());
 			return prepareStmt.executeUpdate();
+		}
+	}
+	
+	public boolean delete(Element element, Connection con) throws SQLException{
+		ResourceDao rDao = new ResourceDao();
+		for(Resource r : element.getResources()){
+			rDao.delete(r.getId(), con);
+		}
+		try(PreparedStatement prepareStmt = con.prepareStatement(remove)){
+			prepareStmt.setInt(1, element.getId());
+			return prepareStmt.execute();
 		}
 	}
 }

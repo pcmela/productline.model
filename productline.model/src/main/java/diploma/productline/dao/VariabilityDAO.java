@@ -17,6 +17,7 @@ public class VariabilityDAO extends BaseDAO {
 	private final String selectVariabilityByPL = "SELECT variability_id, name FROM variability WHERE module_id like ?";
 	private final String insertVariability = "INSERT INTO variability (name,description,module_id) VALUES (?,?,?)";
 	private final String update = "UPDATE variability SET name = ?, description = ? WHERE variability_id = ?";
+	private final String remove = "DELETE FROM variability WHERE variability_id = ?";
 
 
 	public Variability getVariability(String id, Connection con)
@@ -113,6 +114,13 @@ public class VariabilityDAO extends BaseDAO {
 			prepareStmt.setString(2, variability.getDescription());
 			prepareStmt.setInt(3, variability.getId());
 			return prepareStmt.executeUpdate();
+		}
+	}
+	
+	public boolean delete(int id, Connection con) throws SQLException{
+		try(PreparedStatement prepStatement = con.prepareStatement(remove)){
+			prepStatement.setLong(1, id);
+			return prepStatement.execute();
 		}
 	}
 }
