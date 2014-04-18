@@ -16,7 +16,7 @@ import diploma.productline.entity.Variability;
 
 public class YamlExtractor {
 
-	public static ProductLine extract(String path) {
+	public static ProductLine extract(String path) throws IllegalStateException{
 		InputStream ins;
 		try {
 			ins = new FileInputStream(new File(path));
@@ -28,7 +28,12 @@ public class YamlExtractor {
 			JavaBeanLoader<ProductLine> loader = new JavaBeanLoader<ProductLine>(
 					typeDescription);
 
-			return validateProductLineForDAO(loader.load(ins));
+			try {
+				ProductLine p = validateProductLineForDAO(loader.load(ins));
+				return p;
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getMessage());
+			}
 
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -40,6 +45,7 @@ public class YamlExtractor {
 
 	/**
 	 * Set the parent object for each child
+	 * 
 	 * @param productLine
 	 * @return productLine
 	 */
@@ -47,7 +53,7 @@ public class YamlExtractor {
 		if (productLine.getModules() != null) {
 			for (Module m : productLine.getModules()) {
 				m.setProductLine(productLine);
-				
+
 				if (m.getVariabilities() != null) {
 					for (Variability v : m.getVariabilities()) {
 						v.setModule(m);

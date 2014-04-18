@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,14 +34,15 @@ public class ProductLineDAO extends BaseDAO {
 	private static final String selectNamOfChild = "select name from productline where parent_productline = ?";
 	private final String remove = "DELETE FROM productline WHERE productline_id = ?";
 
-	public static void createDatabaseStructure(File ddl, Connection connection)
+	public static void createDatabaseStructure(Reader ddl, Connection connection)
 			throws ClassNotFoundException, SQLException, FileNotFoundException,
-			IOException {
+			IOException {		
 		ScriptRunner runner = new ScriptRunner(connection, true, true);
-		runner.runScript(new BufferedReader(new FileReader(ddl)));
+		runner.runScript(ddl);
 	}
-	
-	public static Set<String> getNamesOfChild(Connection con, int id) throws SQLException{
+
+	public static Set<String> getNamesOfChild(Connection con, int id)
+			throws SQLException {
 		Set<String> set = new HashSet<>();
 		try (PreparedStatement prepStatement = con
 				.prepareStatement(selectNamOfChild)) {
@@ -84,14 +87,16 @@ public class ProductLineDAO extends BaseDAO {
 					}
 
 				}
-
-				productLine.setModules(moduleDao
-						.getModulesWhithChildsByProductLine(productLine, con));
+				if (productLine != null) {
+					productLine.setModules(moduleDao
+							.getModulesWhithChildsByProductLine(productLine,
+									con));
+				}
 			}
 		}
 		return productLine;
 	}
-	
+
 	private ProductLine getProductLineFromDB(Connection con, int id)
 			throws SQLException {
 
@@ -218,9 +223,9 @@ public class ProductLineDAO extends BaseDAO {
 				p.setName(result.getString("name"));
 				p.setDescription(result.getString("description"));
 				Integer parent = result.getInt("parent_productline");
-				if(result.wasNull()){
+				if (result.wasNull()) {
 					p.setParent(null);
-				}else{
+				} else {
 					p.setParent(getProductLineFromDB(con, parent));
 				}
 				set.add(p);
@@ -228,15 +233,15 @@ public class ProductLineDAO extends BaseDAO {
 		}
 		return set;
 	}
-	
-	public boolean delete(ProductLine p, Connection con) throws SQLException{
+
+	public boolean delete(ProductLine p, Connection con) throws SQLException {
 		ModuleDAO mDao = new ModuleDAO();
-		
-		for(Module m : p.getModules()){
+
+		for (Module m : p.getModules()) {
 			mDao.delete(m, con);
 		}
-		
-		try(PreparedStatement prepStatement = con.prepareStatement(remove)){
+
+		try (PreparedStatement prepStatement = con.prepareStatement(remove)) {
 			prepStatement.setLong(1, p.getId());
 			return prepStatement.execute();
 		}
